@@ -58,3 +58,22 @@ Each event line in `machine_<id>.log` follows this format:
 - **`queue=<queue_len>`**: *(Optional)* Logged **only** for `RECEIVE` events, representing the message queue size after popping one message.
 - **`note=`**: *(Optional)* Logged for `INIT` to record details like chosen ticks per second.
 
+**Observations:**
+When running multiple machines over at least one minute each, you can see interesting patterns in the logs:
+- Clock Drift: Each machine operates at a randomly chosen tick rate, so some machines’ Lamport clocks advance faster than others.
+- Message Bursts: Because events are chosen randomly, you might see clusters of SEND and RECEIVE events followed by periods of mostly INTERNAL events.
+- Queue Dynamics: For busy periods, the queue length (logged on RECEIVE) can grow, causing noticeable jumps in Lamport clocks.
+
+These logs give a “god’s eye” view of the distributed system, showing real‐time timestamps vs. logical time.
+
+**Testing:**
+We provide several test cases in the testing directory:
+- tests1-2: Basic scenario with three machines, minimal run time (60 seconds)
+- tests3-5: Extended run (60 - 90 seconds) to observe queue buildup and clock drifts
+
+**Debugging:**
+- Connection Refused: Make sure each machine’s --host and --port are correct and that no other process is using the same port.
+- Log File Not Appearing: Verify that the script has write permissions in the current directory.
+- Machine “Stalls”: Check CPU usage or random number seeds. Sometimes a machine may be starved of resources or produce mostly INTERNAL events, leading to fewer visible sends.
+- Running Across Multiple Computers: Use real IPs (e.g., 192.168.0.x) instead of localhost, and ensure ports are open in firewalls.
+
