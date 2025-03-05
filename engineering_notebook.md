@@ -125,27 +125,27 @@
 
 ### March 5, 2024 — Testing Analysis
 
-### Test Configurations:
+We used the following testing configurations:
 
-### Standard Test (High Internal Event Probability)
+#### Standard Test (High Internal Event Probability)
 - Duration: 60 seconds per run
 - Number of runs: 5
 - Internal event probability: 70% (r > 3 in random 1-10)
 - Clock tick range: 1-6 ticks/second
 
-### Low Internal Event Test
+#### Low Internal Event Test
 - Duration: 60 seconds per run
 - Number of runs: 5
 - Internal event probability: 30% (r > 3 in random 1-10)
 - Clock tick range: 1-6 ticks/second
 
-### High Variability Test
+#### High Variability Test
 - Duration: 60 seconds per run
 - Number of runs: 5
 - Internal event probability: 70% (r > 3 in random 1-10)
 - Clock tick range: 1-12 ticks/second
 
-### Minimal Variability Test
+#### Minimal Variability Test
 - Duration: 60 seconds per run
 - Number of runs: 5
 - Internal event probability: 30% (r > 3 in random 1-10)
@@ -153,34 +153,34 @@
 
 ### Test Results and Analysis
 
-### Test Suite Overview
+#### Test Suite Overview
 Analyzed 5 sets of test runs from the testing directory, each test has logs from 3  machines.
 
-### Test Set 1: Baseline Performance (60 seconds)
+#### Test Set 1: Baseline Performance (60 seconds)
 - Clock progression: Steady increase in logical clock values
 - Maximum queue length: 1 message
 - Event distribution: ~40% internal events, ~60% message events
 - Final logical clock values: 120-180 range
 
-### Test Set 2: High Message Rate (60 seconds)
+#### Test Set 2: High Message Rate (60 seconds)
 - Increased communication frequency
 - Queue lengths peaked at 2-3 messages
 - Higher logical clock progression rate
 - More synchronized clock values between machines
 
-### Test Set 3: Variable Speed Impact (60 seconds)
+#### Test Set 3: Variable Speed Impact (60 seconds)
 - Significant clock value disparities (up to 50%)
 - Queue lengths remained manageable (max 2)
 - Clear correlation between tick rate and message sending frequency
 - Final logical clock values showed wider spread
 
-### Test Set 4: System Under Load (75 seconds)
+#### Test Set 4: System Under Load (75 seconds)
 - Higher overall system activity
 - Balanced distribution of events
 - Queue lengths stayed consistent (1-2 messages)
 - Good recovery from temporary congestion
 
-### Test Set 5: Extended Duration (75 seconds)
+#### Test Set 5: Extended Duration (75 seconds)
 - Demonstrated long-term stability
 - Consistent event processing patterns
 - Final logical clock values: 250-300 range
@@ -210,7 +210,8 @@ Analyzed 5 sets of test runs from the testing directory, each test has logs from
 
 #### Test Run 1: Standard Configuration
 
-#### Machine Configurations:
+We configured the machines as follows: 
+
 - Machine 1: 3 ticks/second
 - Machine 2: 5 ticks/second
 - Machine 3: 2 ticks/second
@@ -233,7 +234,8 @@ Analyzed 5 sets of test runs from the testing directory, each test has logs from
 
 ### Test Run 2: Low Internal Event Probability
 
-#### Machine Configurations:
+We configured the machines as follows: 
+
 - Machine 1: 4 ticks/second
 - Machine 2: 2 ticks/second
 - Machine 3: 6 ticks/second
@@ -256,7 +258,8 @@ Analyzed 5 sets of test runs from the testing directory, each test has logs from
 
 ### Test Run 3: High Variability (1-12 ticks/second)
 
-#### Machine Configurations:
+We configured the machines as follows: 
+
 - Machine 1: 11 ticks/second
 - Machine 2: 3 ticks/second
 - Machine 3: 8 ticks/second
@@ -279,7 +282,8 @@ Analyzed 5 sets of test runs from the testing directory, each test has logs from
 
 ### Test Run 4: Minimal Variability (4-6 ticks/second)
 
-#### Machine Configurations:
+We configured the machines as follows: 
+
 - Machine 1: 5 ticks/second
 - Machine 2: 4 ticks/second
 - Machine 3: 6 ticks/second
@@ -302,40 +306,13 @@ Analyzed 5 sets of test runs from the testing directory, each test has logs from
 
 ## Key Findings
 
-1. **Impact of Clock Rate Variability:**
-   - Larger tick rate ranges led to:
-     - Greater clock drift
-     - Longer message queues
-     - Larger logical clock jumps
-   - Smaller ranges produced more predictable behavior
+1. Larger tick rates had longer message queues, larger logical clock jumps, and greater clock drift. This is expected as larger tick rates lead to longer logical clocks and higher message processing overhead, and smaller ranges lead to more consistent behavior.
 
-2. **Effect of Internal Event Probability:**
-   - Lower internal event probability resulted in:
-     - More frequent message exchanges
-     - Better clock synchronization
-     - Higher average queue lengths
-   - Higher internal event probability led to:
-     - More independent machine operation
-     - Smaller queue lengths
-     - Greater clock drift
+2. When we had lower internal event probabilities, we noticed that there were more frequent message exchanges, better clock synchronization, but higher average queue lengths. This makes sense as the lower internal event probability means there will be more frequent message exchanges, which leads to better clock synchronization but longer queue lengths since there's just more messages to process. However, when we had higher internal event probabilities, we saw the opposite: there were fewer message exchanges, but longer average queue lengths and larger clock jumps. This makes sense in the reverse direction as well, since the higher since there are fewer messages to process, the clock jumps will be smaller.
 
-3. **Machine Performance Correlation:**
-   - Faster machines (higher tick rates):
-     - Dominated message sending
-     - Maintained shorter queues
-     - Experienced smaller clock jumps
-   - Slower machines:
-     - Accumulated longer queues
-     - Had larger clock jumps
-     - Spent more time processing messages
+3. Faster machines (higher tick rates) dominated message sending, maintained shorter queues, and experienced smaller clock jumps. Slower machines were less consistent, as they had longer queues and larger clock jumps. This is expected as slower machines have longer logical clocks, and therefore more message processing overhead, and longer queues due to the higher tick rate.
 
-4. **System Stability:**
-   - Most stable configuration:
-     - Minimal tick rate variation (4-6 ticks/second)
-     - Lower internal event probability
-   - Least stable configuration:
-     - Maximum tick rate variation (1-12 ticks/second)
-     - High internal event probability
+4. The most stable configuration was when we had minimal tick rate variation (4-6 ticks/second) and lower internal event probabilities. This is expected as smaller ranges lead to more consistent behavior. The least stable configuration was when we had maximum tick rate variation (1-12 ticks/second) and higher internal event probabilities. More stable configurations can be more applicable in situations where the speed variation is moderate, such as in a cloud computing environment where virtual machines have similar hardware specifications, but slightly different loads. The least stable configurations are more suitable when the speed variation is extreme and the internal event probabilities are high, such as in an Internet of Things (IoT) network where we have a variety of devices processing data at different rates.
 
 ## Interesting Observations
 
@@ -356,86 +333,45 @@ Analyzed 5 sets of test runs from the testing directory, each test has logs from
 
 ## Analysis of Test Results
 
-### Test Configuration 1: Standard Settings
-- Machine speeds varied from 1-6 ticks/second
-- High internal event probability (70%)
-- 60-second test duration
+### Test Configuration 1 (Standard Settings)
+- **Setup**: 1-6 ticks/second, 70% internal events, 60s duration
+- **Results**:
+  * Logical clocks progressed steadily (average final value: L=124)
+  * Small clock jumps (1-2 ticks) during normal operation
+  * Queue lengths stayed small (0-2 messages)
+  * Faster machines showed more consistent behavior
 
-#### Observations:
-1. **Logical Clock Behavior**
-   - Machine 1 (6 ticks/s) showed steady progression, reaching L=124
-   - Clock jumps were relatively small (1-2 ticks) during normal operation
-   - Larger jumps (3-4 ticks) occurred during message processing
+### Test Configuration 2 (Modified Settings)
+- **Setup**: 1-6 ticks/second, 30% internal events, 60s duration
+- **Results**:
+  * Higher message congestion (queues up to 13 messages)
+  * Larger clock jumps (5-10 ticks)
+  * Slower machines struggled with processing
+  * Less predictable clock progression
 
-2. **Clock Drift Analysis**
-   - System time logs show increasing drift between machines
-   - Faster machines (6 ticks/s) maintained more consistent clock progression
-   - Slower machines showed periodic catch-up jumps during message receives
+### Test Configuration 3 (Reduced Variation)
+- **Setup**: 1-3 ticks/second, 30% internal events, 60s duration
+- **Results**:
+  * More consistent clock progression
+  * Better load distribution
+  * Smaller queue lengths (max 2 messages)
+  * More uniform message patterns
 
-3. **Queue Dynamics**
-   - Queue lengths remained manageable (0-2 messages typically)
-   - Quick message processing prevented significant queue buildup
-   - Internal events helped regulate message flow
-
-### Test Configuration 2: Modified Settings
-- Same speed variation (1-6 ticks/second)
-- Lower internal event probability (30%)
-- 60-second test duration
-
-### Test Configuration 3: Reduced Clock Variation
-- Smaller speed variation (1-3 ticks/second)
-- Lower internal event probability (30%)
-- 60-second test duration
-
-#### Key Findings:
-1. **Message Queue Impact**
-   - Significantly higher queue lengths (up to 13 messages)
-   - Slower machines struggled with message processing
-   - Queue lengths showed steady increase over time
-
-2. **Clock Progression Patterns**
-   - More frequent and larger clock jumps (5-10 ticks)
-   - Faster machines dominated message sending
-   - Slower machines primarily processed receives
-
-3. **System Behavior Changes**
-   - Higher message congestion
-   - More pronounced clock value gaps
-   - Less predictable clock progression
-
-### Test Configuration 3 Results:
-
-1. **Clock Synchronization**
-   - All machines reached similar final values (L=60)
-   - More consistent clock progression across machines
-   - Smaller variations in logical time between machines
-
-2. **Queue Performance**
-   - Maximum queue length reduced to 2 messages
-   - More balanced message processing
-   - Fewer instances of queue buildup
-
-3. **Message Distribution**
-   - More uniform message sending patterns
-   - Better load distribution between machines
-   - Reduced occurrence of message bursts
-
-### Interesting Observations
-
+### Key Observations
 1. **Speed Impact**
-   - Faster machines (6 ticks/s) maintained better stability
-   - Slower machines (1-2 ticks/s) showed increasing queue backlog
-   - Speed differences led to natural load balancing
+   - Faster machines maintained stability and shorter queues
+   - Slower machines showed periodic catch-up behavior
+   - Speed differences created natural load balancing
 
-2. **Message Patterns**
-   - Burst patterns emerged in send operations
-   - Receive operations showed catch-up behavior
-   - Queue lengths correlated with machine speed differences
+2. **Event Probability Effects**
+   - Higher internal events (70%) improved stability
+   - Lower internal events (30%) increased message congestion
+   - System self-regulated better with more internal events
 
-3. **System Stability**
-   - Higher internal event rates improved stability
-   - Lower internal event rates stressed the system
-   - Natural self-regulation emerged in message exchange
+3. **Queue Management**
+   - Queue lengths correlated with machine speeds
+   - Message bursts caused temporary congestion
+   - System recovered well from queue buildups
 
 ## Conclusions
 
@@ -454,6 +390,32 @@ Analyzed 5 sets of test runs from the testing directory, each test has logs from
      * Efficient resource utilization
 
 The architecture should be suitable for asynchronous communication and variable speed environments, with extended operation periods.
+
+## Future Work
+
+In the future, we could implement the following features:
+
+- 
+
+1. **Dynamic Rate Adaptation**
+   - Implement adaptive tick rates that adjust based on system load
+   - Add feedback mechanisms to optimize machine performance
+   - Develop automatic queue length management
+
+2. **Enhanced Testing**
+   - Test with larger networks (5+ machines)
+   - Simulate network delays and failures
+   - Measure performance under sustained high load
+
+3. **Monitoring and Visualization**
+   - Create real-time visualization of logical clocks
+   - Add system health monitoring
+   - Implement performance metrics dashboard
+
+4. **Optimization Opportunities**
+   - Implement message batching for efficiency
+   - Add priority queues for critical messages
+   - Optimize memory usage for long-running operations
 
 ## Project Evolution
 
