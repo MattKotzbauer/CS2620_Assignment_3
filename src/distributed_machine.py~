@@ -189,7 +189,7 @@ class Machine:
             
             else:
                 # No incoming message => do a random event
-                r = random.randint(1, 5)
+                r = random.randint(1, 10)
                 
                 if r == 1:
                     # Send to exactly ONE peer (choose randomly if multiple)
