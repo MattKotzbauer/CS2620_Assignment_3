@@ -57,7 +57,7 @@ class Machine:
         self.msg_queue = queue.Queue()
         
         # Decide random ticks-per-second from 1..6
-        self.ticks_per_second = random.randint(3, 4)
+        self.ticks_per_second = random.randint(1, 6)
         self.cycle_time = 1.0 / self.ticks_per_second
         
         # Open a log file for this machine
