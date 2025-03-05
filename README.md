@@ -31,6 +31,11 @@ We track relative time via **Lamport Clocks**:
 	 * Every message carries the sender's logical clock value
 	 * When a process receives a message carrying timestamp T, it does `logical_clock = max(logical_clock, T) + 1`
 
+To run all of the scripts to get all output files, we created an executable:
+```bash
+chmod +x run_machines.sh
+./run_machines.sh
+```
 
 **File Structure:**
 ```
